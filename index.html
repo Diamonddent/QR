@@ -1,3 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stylish Form</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #fff7e6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .form-container {
+      background-color: #ffffff;
+      border: 2px solid #ffa500;
+      border-radius: 10px;
+      padding: 30px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .form-container h2 {
+      text-align: center;
+      color: #ff8c00;
+      margin-bottom: 20px;
+    }
+    .form-container input {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+      color: #333;
+      transition: border-color 0.3s;
+    }
+    .form-container input:focus {
+      border-color: #ffa500;
+      outline: none;
+    }
+    .form-container button {
+      width: 100%;
+      padding: 12px;
+      background-color: #ffa500;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .form-container button:hover {
+      background-color: #ff8c00;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Submit Your Data</h2>
+    <form id="dataForm">
+      <input id="qrInput" name="Qr" type="text" placeholder="Qr" required>
+      <input id="quantityInput" name="Quantity" type="number" placeholder="Quantity" required>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('dataForm');
+    const qrInput = document.getElementById('qrInput');
+    const quantityInput = document.getElementById('quantityInput');
+
+    // Auto-focus Qr on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      qrInput.focus();
+    });
+
+    // Auto-move to Quantity after fast scanner input
+    let scanTimeout;
+    qrInput.addEventListener('input', () => {
+      clearTimeout(scanTimeout);
+      scanTimeout = setTimeout(() => {
+        if (qrInput.value.trim() !== '') {
+          quantityInput.focus();
+        }
+      }, 300);
+    });
+
+    // Handle form submission
+    form.addEventListener('submit', function (event) {
+      event.preventDefault(); // Prevent default form submission
+
+      const formData = new FormData(form);
+      const url = 'https://script.google.com/macros/s/AKfycbw47kkmoHvF_1WXt0p8Oe4cykOKjv08-W2bWAAK4I0kDTQy0rgBZoaDRxAQVtwX2mAA3A/exec';
+
 fetch(url, {
   method: 'POST',
   body: formData
@@ -20,3 +118,8 @@ fetch(url, {
   console.error('Fetch error:', error);
   alert('Fetch failed. Please check console.');
 });
+
+    });
+  </script>
+</body>
+</html>
