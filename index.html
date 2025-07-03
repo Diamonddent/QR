@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Stylish Form</title>
+  <title>QR Scanner</title>
   <style>
     body {
       font-family: 'Arial', sans-serif;
@@ -51,20 +51,36 @@
       border-radius: 5px;
       font-size: 18px;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: background-color 0.1s ease, transform 0.1s ease;
     }
     .form-container button:hover {
       background-color: #ff8c00;
+    }
+    .form-container button.clicked {
+      background-color: #cc7000;
+      transform: scale(0.95);
+    }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type=number] {
+      -moz-appearance: textfield;
     }
   </style>
 </head>
 <body>
   <div class="form-container">
     <h2>Submit Your Data</h2>
-    <form id="dataForm">
+    <form 
+      id="dataForm"
+      method="POST"
+      action="https://script.google.com/macros/s/AKfycbw47kkmoHvF_1WXt0p8Oe4cykOKjv08-W2bWAAK4I0kDTQy0rgBZoaDRxAQVtwX2mAA3A/exec"
+    >
       <input id="qrInput" name="Qr" type="text" placeholder="Qr" required>
       <input id="quantityInput" name="Quantity" type="number" placeholder="Quantity" required>
-      <button type="submit">Send</button>
+      <button id="submitBtn" type="submit">Send</button>
     </form>
   </div>
 
@@ -72,13 +88,14 @@
     const form = document.getElementById('dataForm');
     const qrInput = document.getElementById('qrInput');
     const quantityInput = document.getElementById('quantityInput');
+    const submitBtn = document.getElementById('submitBtn');
 
-    // Auto-focus Qr on page load
+    // Focus on QR input when page loads
     window.addEventListener('DOMContentLoaded', () => {
       qrInput.focus();
     });
 
-    // Auto-move to Quantity after fast scanner input
+    // Move to quantity input after QR input is filled
     let scanTimeout;
     qrInput.addEventListener('input', () => {
       clearTimeout(scanTimeout);
@@ -89,36 +106,14 @@
       }, 300);
     });
 
-    // Handle form submission
-    form.addEventListener('submit', function (event) {
-      event.preventDefault(); // Prevent default form submission
+    // On submit: add click effect, then submit normally and reload immediately
+    form.addEventListener('submit', () => {
+      submitBtn.classList.add('clicked');
 
-      const formData = new FormData(form);
-      const url = 'https://script.google.com/macros/s/AKfycbw47kkmoHvF_1WXt0p8Oe4cykOKjv08-W2bWAAK4I0kDTQy0rgBZoaDRxAQVtwX2mAA3A/exec';
-
-fetch(url, {
-  method: 'POST',
-  body: formData
-})
-.then(response => response.json())
-.then(result => {
-  if (result.result === 'success') {
-    qrInput.value = '';
-    quantityInput.value = '';
-    qrInput.focus();
-
-    setTimeout(() => {
-      window.location.href = 'https://diamonddent-sa.github.io/Qr/';
-    }, 2000);
-  } else {
-    alert('Submission failed: ' + result.error);
-  }
-})
-.catch(error => {
-  console.error('Fetch error:', error);
-  alert('Fetch failed. Please check console.');
-});
-
+      // Slight delay for visual effect, then reload page immediately
+      setTimeout(() => {
+        location.reload(); // This assumes form will be submitted fast
+      }, 50); // Very quick delay for animation to show
     });
   </script>
 </body>
