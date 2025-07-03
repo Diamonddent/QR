@@ -68,6 +68,9 @@
     input[type=number] {
       -moz-appearance: textfield;
     }
+::placeholder {
+text-align: center;
+}
   </style>
 </head>
 <body>
@@ -78,8 +81,8 @@
       method="POST"
       action="https://script.google.com/macros/s/AKfycbw47kkmoHvF_1WXt0p8Oe4cykOKjv08-W2bWAAK4I0kDTQy0rgBZoaDRxAQVtwX2mAA3A/exec"
     >
-      <input id="qrInput" name="Qr" type="text" placeholder="Scan the code" required autocomplete="off" />
-      <input id="quantityInput" name="Quantity" type="number" placeholder="Items Qty" required />
+      <input id="qrInput" name="Qr" type="text" placeholder="Scan the code..." required autocomplete="off" />
+      <input id="quantityInput" name="Quantity" type="number" placeholder="Items Quantity" required />
       <button id="submitBtn" type="submit">Submit</button>
     </form>
   </div>
