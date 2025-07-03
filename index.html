@@ -78,8 +78,8 @@
       method="POST"
       action="https://script.google.com/macros/s/AKfycbw47kkmoHvF_1WXt0p8Oe4cykOKjv08-W2bWAAK4I0kDTQy0rgBZoaDRxAQVtwX2mAA3A/exec"
     >
-      <input id="qrInput" name="Qr" type="text" placeholder="Qr" required>
-      <input id="quantityInput" name="Quantity" type="number" placeholder="Quantity" required>
+      <input id="qrInput" name="Qr" type="text" placeholder="Qr" required autocomplete="off" />
+      <input id="quantityInput" name="Quantity" type="number" placeholder="Quantity" required />
       <button id="submitBtn" type="submit">Send</button>
     </form>
   </div>
@@ -90,30 +90,51 @@
     const quantityInput = document.getElementById('quantityInput');
     const submitBtn = document.getElementById('submitBtn');
 
+    // Create an AudioContext and beep function
+    function playBeep() {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(1000, audioCtx.currentTime); // 1000 Hz beep
+      gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime); // volume
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      oscillator.start();
+      oscillator.stop(audioCtx.currentTime + 0.1); // beep duration 100ms
+
+      oscillator.onended = () => {
+        audioCtx.close();
+      };
+    }
+
     // Focus on QR input when page loads
     window.addEventListener('DOMContentLoaded', () => {
       qrInput.focus();
     });
 
-    // Move to quantity input after QR input is filled
     let scanTimeout;
     qrInput.addEventListener('input', () => {
       clearTimeout(scanTimeout);
       scanTimeout = setTimeout(() => {
         if (qrInput.value.trim() !== '') {
-          quantityInput.focus();
+          playBeep();           // Play beep on data input completion
+          quantityInput.focus(); // Move focus to quantity input
         }
       }, 300);
     });
 
     // On submit: add click effect, then submit normally and reload immediately
-    form.addEventListener('submit', () => {
+    form.addEventListener('submit', (e) => {
       submitBtn.classList.add('clicked');
 
       // Slight delay for visual effect, then reload page immediately
       setTimeout(() => {
         location.reload(); // This assumes form will be submitted fast
-      }, 50); // Very quick delay for animation to show
+      }, 50);
     });
   </script>
 </body>
